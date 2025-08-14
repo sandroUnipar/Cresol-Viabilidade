@@ -1,0 +1,306 @@
+/* =========================================================
+   TEMA CRESOL
+========================================================= */
+:root{
+  --cresol-green:#204D3B;      /* base */
+  --cresol-green-700:#17392C;  /* hover */
+  --cresol-green-50:#F0F5F3;   /* surfaces */
+  --cresol-orange:#F3921F;
+  --bg:#F6F8F8;
+  --text:#2F3A3A;
+  --muted:#6B7B7B;
+  --card:#ffffff;
+  --border:#E6ECEC;
+  --success:#2E7D32;
+  --warning:#FF9F2C;
+  --danger:#D32F2F;
+  --shadow-sm:0 2px 6px rgba(0,0,0,.06);
+  --shadow-md:0 10px 24px rgba(0,0,0,.10);
+  --shadow-lg:0 18px 40px rgba(0,0,0,.16);
+  --radius:14px;
+  --font:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;
+}
+
+/* =========================================================
+   BASE / UTIL
+========================================================= */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family:var(--font); background:var(--bg); color:var(--text);
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+}
+img{max-width:100%; display:block}
+.hidden{opacity:0; pointer-events:none}
+
+/* nice scroll */
+*{scrollbar-width:thin; scrollbar-color: var(--cresol-green) transparent}
+*::-webkit-scrollbar{height:8px;width:8px}
+*::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--cresol-green),#2a6a52);border-radius:20px}
+
+/* animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+@keyframes spin{to{transform:rotate(1turn)}}
+
+/* =========================================================
+   LOADER
+========================================================= */
+#loader{
+  position:fixed; inset:0; background:#fff; display:grid; place-items:center; gap:18px;
+  z-index:9999; transition:opacity .5s ease;
+}
+.loader-logo{width:140px; filter:saturate(1.05)}
+.spinner{width:42px;height:42px;border:4px solid #e9eceb;border-top-color:var(--cresol-green);border-radius:50%;animation:spin 1s linear infinite}
+
+/* =========================================================
+   CABEÇALHO
+========================================================= */
+header{
+  position:sticky; top:0; z-index:50; background:var(--card); box-shadow:var(--shadow-sm);
+  border-bottom:1px solid var(--border);
+}
+.logo-container{
+  max-width:1240px; margin:auto; padding:14px 20px; display:flex; align-items:center; gap:18px; justify-content:space-between;
+}
+.header-logo{height:38px}
+.logo-container h1{font-size:1.12rem; color:var(--cresol-green); font-weight:700; letter-spacing:.2px}
+.header-nav{display:flex; gap:12px; align-items:center}
+#logged-in-user{color:var(--muted); font-weight:600}
+
+/* =========================================================
+   BOTÕES
+========================================================= */
+button,.action-button,.secondary-button,.danger-button{
+  font-family:var(--font); font-weight:600; border:none; cursor:pointer; transition:all .25s ease;
+  border-radius:12px; padding:.75rem 1.1rem; display:inline-flex; gap:8px; align-items:center; justify-content:center;
+}
+.action-button{background:linear-gradient(135deg,var(--cresol-green),var(--cresol-green-700)); color:#fff; box-shadow:var(--shadow-sm)}
+.action-button:hover{transform:translateY(-2px); box-shadow:var(--shadow-md); filter:saturate(1.05)}
+.secondary-button{background:#f5f7f7; color:var(--text); border:1px solid var(--border)}
+.secondary-button:hover{background:#eef2f1}
+.danger-button{background:var(--danger); color:#fff}
+.danger-button:hover{filter:brightness(.95); transform:translateY(-2px)}
+.action-button.success{background:linear-gradient(135deg,#1e8e3e,#14692d)}
+.action-button.error{background:linear-gradient(135deg,#d64545,#a52828)}
+.back-button{margin-bottom:1rem; border:1px solid var(--border); background:#fff}
+.back-button:hover{background:#f6f9f7}
+
+/* status variants para admin */
+.action-button.approve{background:linear-gradient(135deg,#2e7d32,#1b5e20)}
+.action-button.reprove{background:linear-gradient(135deg,#c62828,#922323)}
+.action-button.improve{background:linear-gradient(135deg,#ff9f2c,#e68100)}
+.action-button.approve:hover,.action-button.reprove:hover,.action-button.improve:hover{transform:translateY(-2px); box-shadow:var(--shadow-md)}
+
+/* =========================================================
+   FORM / CAMPOS
+========================================================= */
+input,textarea,select{
+  width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:10px; background:#fbfcfc; font:inherit; color:inherit;
+  transition:border .2s ease, box-shadow .2s ease, background .2s ease;
+}
+input:focus,textarea:focus,select:focus{outline:none; border-color:var(--cresol-orange); box-shadow:0 0 0 4px rgba(243,146,31,.14); background:#fff}
+textarea{resize:vertical}
+.form-group{display:flex; flex-direction:column; gap:.45rem; margin-bottom:1rem}
+.select-wrapper{position:relative}
+.select-wrapper i{position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--muted); pointer-events:none}
+
+/* =========================================================
+   MAIN LAYOUT + CARDS
+========================================================= */
+main{max-width:1240px; margin:auto; padding:24px}
+.page{display:none; animation:fadeUp .35s ease forwards}
+.page.active{display:block}
+.card{
+  background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem 1.35rem;
+  box-shadow:var(--shadow-sm); animation:fadeUp .35s ease;
+}
+
+/* =========================================================
+   HOME / MENU + HISTÓRICO
+========================================================= */
+.page-header{text-align:center; margin: .2rem 0 1.2rem}
+.page-header h1,.page-header h2{color:var(--cresol-green); font-weight:700}
+.page-header p{color:var(--muted)}
+
+.menu-container{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:18px; margin:18px 0 28px;
+}
+.menu-card{
+  background:var(--card); border:1px solid var(--border); border-radius:16px; padding:26px 22px; text-align:center;
+  box-shadow:var(--shadow-sm); transition:.28s ease all; cursor:pointer; position:relative; overflow:hidden;
+}
+.menu-card i{width:46px;height:46px;color:var(--cresol-orange); margin:0 auto 10px; display:block}
+.menu-card h3{margin:.4rem 0 .2rem; font-size:1.06rem}
+.menu-card p{color:var(--muted); font-size:.95rem}
+.menu-card::after{
+  content:""; position:absolute; inset:auto 0 0 0; height:4px; background:linear-gradient(90deg,var(--cresol-orange),#ffbb55);
+  transform:translateY(6px); transition:transform .28s ease;
+}
+.menu-card:hover{transform:translateY(-4px); box-shadow:var(--shadow-md)}
+.menu-card:hover::after{transform:translateY(0)}
+
+.history-item{
+  display:grid; grid-template-columns:auto 1fr auto; gap:12px; align-items:center; padding:12px 14px; background:#fff; border:1px solid var(--border);
+  border-radius:12px; margin-bottom:10px; box-shadow:var(--shadow-sm); transition:box-shadow .25s ease, transform .25s ease;
+}
+.history-item:hover{box-shadow:var(--shadow-md); transform:translateY(-2px)}
+.history-icon{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#fff}
+.history-icon.Aprovado{background:var(--success)}
+.history-icon.Reprovado{background:var(--danger)}
+.history-icon.Solicitar-Melhoria{background:var(--warning)}
+.history-details small{color:var(--muted); display:block; margin-top:2px}
+.history-status{color:var(--cresol-green); font-weight:700}
+
+/* =========================================================
+   CALCULADORA / VIABILIDADE
+========================================================= */
+.calculator-container{display:grid; grid-template-columns:2fr 1.05fr; gap:22px}
+.form-section .card:first-child{position:sticky; top:86px; z-index:1}
+.question-category{
+  border-left:6px solid rgba(243,146,31,.35); border-radius:14px; background:#fff; padding:1.25rem 1.25rem 1.1rem;
+  box-shadow:var(--shadow-sm); margin-bottom:16px;
+}
+.question-category h3{margin:0 0 .6rem; color:var(--cresol-green); font-size:1.02rem}
+.question{margin:.75rem 0}
+.question label{display:block; margin-bottom:.55rem; font-weight:600}
+
+.options{display:flex; flex-wrap:wrap; gap:.5rem}
+.options button{
+  background:#f7f9f9; border:1px solid var(--border); border-radius:9px; padding:.55rem .85rem; font-weight:600; color:#2f3a3a; transition:.22s ease all;
+}
+.options button:hover{background:#fff; box-shadow:var(--shadow-sm)}
+.options button.selected{
+  background:linear-gradient(135deg,var(--cresol-orange),#ffad47); color:#fff; border-color:#ffb35a;
+  box-shadow:0 6px 16px rgba(243,146,31,.28); transform:translateY(-1px);
+}
+
+.metric-input-group{display:flex; align-items:center; gap:.55rem}
+.metric-unit{color:var(--muted); font-size:.9rem}
+
+.results-section .sticky{position:sticky; top:86px}
+.results-section .card h2{display:flex; gap:8px; align-items:center; margin:0 0 .6rem}
+
+/* scores “com vida” */
+.results-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:.35rem 0 1rem}
+.score-display{
+  background:#fff; border:1px solid var(--border); border-radius:12px; padding:14px; text-align:center; box-shadow:var(--shadow-sm);
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.score-display:hover{transform:translateY(-2px); box-shadow:var(--shadow-md)}
+.score-value{
+  --ring:#dfe7e5;
+  position:relative; width:94px; height:94px; border-radius:50%; margin:2px auto 8px; display:grid; place-items:center; font-weight:800; font-size:1.15rem;
+  color:var(--cresol-green); background:
+    radial-gradient(#fff 61%,transparent 62%),
+    conic-gradient(var(--cresol-orange) calc(var(--p,0)*1%), var(--ring) 0);
+  box-shadow:inset 0 0 0 1px var(--ring);
+}
+.score-value.positive{--p:100}
+.score-value.warning-color-text{--p:70}
+.score-value.negative{--p:35}
+
+.score-label{font-weight:700; color:#203a32}
+.score-description{color:var(--muted); font-size:.9rem}
+
+#costs-container{margin:.5rem 0 0}
+.cost-item{display:flex; align-items:center; justify-content:space-between; padding:.45rem 0; font-weight:500}
+#savings-cost.positive{color:var(--success)}
+#savings-cost.negative{color:var(--danger)}
+.recommendation-text{
+  margin-top:.75rem; padding:.65rem .75rem; border-radius:10px; background:#f3f6f5; font-weight:600; color:#203a32;
+}
+.recommendation-text.positive{background:rgba(46,125,50,.12); color:var(--success)}
+.recommendation-text.warning-color-text{background:rgba(255,159,44,.16); color:#c26c00}
+.recommendation-text.negative{background:rgba(211,47,47,.12); color:var(--danger)}
+
+/* admin action */
+.admin-buttons{display:grid; grid-template-columns:repeat(3,1fr); gap:.55rem; margin-top:.6rem}
+
+/* =========================================================
+   ADMIN
+========================================================= */
+.admin-container{display:grid; grid-template-columns:1.15fr .85fr; gap:22px}
+#current-questions-list{margin-top:.8rem}
+.question-item{
+  background:#fbfcfc; border:1px solid var(--border); border-radius:10px; padding:.6rem .75rem; display:flex; justify-content:space-between; align-items:center; gap:.75rem; margin:.45rem 0;
+}
+.question-item-actions button{
+  border:1px solid var(--border); background:#fff; border-radius:9px; padding:.4rem .55rem; color:#2c3a36
+}
+.question-item-actions button:hover{background:#f0f4f3}
+
+.user-item{background:#fbfcfc; border:1px solid var(--border); border-radius:10px; padding:.7rem .8rem; display:flex; align-items:center; justify-content:space-between; gap:.75rem; margin:.45rem 0}
+.user-details small{display:block; color:var(--muted)}
+
+/* =========================================================
+   MODAL (ADICIONAR/EDITAR PERGUNTA)
+========================================================= */
+.modal-backdrop{
+  position:fixed; inset:0; display:flex; align-items:center; justify-content:center; padding:18px;
+  background:rgba(14,20,18,.62); backdrop-filter:saturate(1.2) blur(2px);
+  z-index:2000; opacity:1; visibility:visible; transition:opacity .25s ease, visibility .25s ease;
+}
+.modal-backdrop.hidden{opacity:0; visibility:hidden}
+.modal-content{
+  width:min(720px,100%); background:var(--card); border-radius:18px; border:1px solid var(--border);
+  padding:22px; box-shadow:var(--shadow-lg); animation:pop .3s ease;
+}
+.modal-content h3{margin-top:0; color:var(--cresol-green); display:flex; align-items:center; gap:8px}
+#admin-type-specific h4{margin:.3rem 0 .3rem}
+.option-input-group{
+  display:grid; grid-template-columns:1fr 140px 36px; gap:.5rem; align-items:center; margin:.4rem 0;
+}
+.option-input-group .remove-option-btn{
+  display:grid; place-items:center; border:1px solid var(--border); background:#fff; border-radius:8px; height:42px
+}
+.option-input-group .remove-option-btn:hover{background:#f4f6f6}
+.modal-actions{display:flex; justify-content:flex-end; gap:.6rem; margin-top:1rem}
+
+/* =========================================================
+   LOGIN PAGE (login.html usa body.login-body)
+========================================================= */
+.login-body{
+  display:grid; place-items:center; min-height:100vh; padding:24px;
+  background:radial-gradient(1200px 600px at -10% -10%, #ffb76122 0%, transparent 60%),
+             radial-gradient(1200px 600px at 110% 110%, #2a6a5233 0%, transparent 60%),
+             linear-gradient(135deg,var(--cresol-green),#2a6a52 60%, var(--cresol-orange) 160%);
+}
+.login-container{
+  width:min(420px,100%); background:var(--card); border:1px solid var(--border);
+  border-radius:20px; padding:28px 26px; box-shadow:var(--shadow-lg); animation:pop .35s ease;
+}
+.login-logo{height:70px; margin:0 auto 10px}
+.login-box h1{color:var(--cresol-green); text-align:center; font-weight:800; margin:.25rem 0}
+.login-box p{text-align:center; color:var(--muted); margin:0 0 1.25rem}
+.input-group{position:relative; margin-bottom:12px}
+.input-group i{position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--muted)}
+.login-box input{padding-left:44px}
+#login-btn{width:100%; margin-top:6px}
+
+/* primeiro acesso – força visual no medidor */
+#password-strength{
+  height:10px; width:100%; background:#edf2f1; border-radius:999px; overflow:hidden; margin:.35rem 0 .15rem;
+}
+#password-strength-fill{height:100%; width:0%; background:var(--danger); transition:width .25s ease, background .25s ease}
+#password-strength-text{font-size:.86rem; color:var(--muted); font-weight:600}
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+@media (max-width:1100px){
+  .calculator-container{grid-template-columns:1.4fr 1fr}
+}
+@media (max-width:900px){
+  .calculator-container,.admin-container{grid-template-columns:1fr}
+  .results-grid{grid-template-columns:1fr 1fr}
+  .form-section .card:first-child{position:static}
+  .results-section .sticky{top:74px}
+}
+@media (max-width:640px){
+  main{padding:16px}
+  .menu-container{grid-template-columns:1fr}
+  .results-grid{grid-template-columns:1fr}
+  .admin-buttons{grid-template-columns:1fr}
+  .option-input-group{grid-template-columns:1fr 120px 36px}
+}

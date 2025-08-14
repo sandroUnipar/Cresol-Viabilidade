@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Plataforma de Automação Cresol</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body class="login-body">
+    <div class="login-container">
+        <div class="login-box">
+            <img src="https://cresol.com.br/wp-content/uploads/2022/04/Vertical-Principal-1-768x498.png.webp" alt="Logo Cresol" class="login-logo">
+            <h1 id="login-title">Plataforma de Automação</h1>
+            <p id="login-subtitle">Entre com seu usuário Cresol</p>
+
+            <div id="login-error-message" class="error-message" style="display: none;"></div>
+
+            <div id="login-form">
+                <div class="input-group">
+                    <i data-feather="user"></i>
+                    <input type="text" id="username" placeholder="Usuário" autocomplete="username">
+                </div>
+                <div class="input-group">
+                    <i data-feather="lock"></i>
+                    <input type="password" id="password" placeholder="Senha" autocomplete="current-password">
+                </div>
+                <button id="login-btn" class="action-button">Entrar</button>
+            </div>
+
+            <div id="create-password-form" style="display: none;">
+                <div class="input-group">
+                    <i data-feather="lock"></i>
+                    <input type="password" id="new-password" placeholder="Nova Senha">
+                </div>
+                 <div class="input-group">
+                    <i data-feather="lock"></i>
+                    <input type="password" id="confirm-password" placeholder="Confirmar Senha">
+                </div>
+                <div id="password-strength-bar"><div id="password-strength-fill"></div></div>
+                <small id="password-strength-text"></small>
+                <button id="create-password-btn" class="action-button">Criar Senha e Entrar</button>
+            </div>
+        </div>
+    </div>
+    <div class="login-visual"></div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

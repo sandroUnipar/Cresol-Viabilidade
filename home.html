@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma de Automação - Cresol</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+    <div id="loader">
+        <img src="https://cresol.com.br/wp-content/uploads/2022/04/Vertical-Principal-1-768x498.png.webp" alt="Logo Cresol" class="loader-logo">
+        <div class="spinner"></div>
+    </div>
+
+    <div id="app-content" class="hidden">
+        <header>
+            <div class="logo-container">
+                <img src="https://cresol.com.br/wp-content/uploads/2022/04/Vertical-Principal-1-768x498.png.webp" alt="Logo Cresol" class="header-logo">
+                <h1>Plataforma de Automação</h1>
+                <div class="header-nav">
+                    <span id="logged-in-user"></span>
+                    <button id="logout-btn" class="secondary-button"><i data-feather="log-out"></i> Sair</button>
+                </div>
+            </div>
+        </header>
+        <main>
+            <div id="home-page" class="page">
+                <div class="page-header">
+                    <h2>Bem-vindo ao Centro de Excelência em Automação</h2>
+                    <p>Selecione a ferramenta que deseja utilizar.</p>
+                </div>
+                <div class="menu-container">
+                    <div class="menu-card" onclick="showPage('calculator-page')"><i data-feather="bar-chart-2"></i><h3>Analisar Viabilidade de Automação</h3><p>Avalie a prontidão e adequação de novas ideias.</p></div>
+                    <div class="menu-card" onclick="showPage('admin-page')"><i data-feather="settings"></i><h3>Configurações</h3><p>Defina parâmetros de custo e administre perguntas.</p></div>
+                </div>
+                 <div class="page-header">
+                    <h2><i data-feather="clock"></i> Histórico de Decisões</h2>
+                </div>
+                <div id="history-container" class="card"></div>
+            </div>
+            <div id="calculator-page" class="page">
+                <button class="back-button" onclick="showPage('home-page')"><i data-feather="arrow-left"></i> Voltar ao Menu</button>
+                <div class="page-header"><h1><i data-feather="bar-chart-2"></i> Análise de Viabilidade de Automação</h1></div>
+                <div class="calculator-container">
+                    <div class="form-section">
+                        <div class="card"><input type="text" id="processName" placeholder="Nome do Processo / Ideia"></div>
+                        <div id="questions-container"></div>
+                    </div>
+                    <div class="results-section">
+                        <div class="card sticky">
+                            <h2><i data-feather="check-square"></i> Pontuação e Custos</h2>
+                            <div id="results-container" class="results-grid"></div>
+                            <div id="costs-container"></div>
+                            <p id="recommendation" class="recommendation-text">Preencha os campos para ver a análise.</p>
+                            <div id="admin-actions-container" style="display: none;">
+                                <hr>
+                                <h3><i data-feather="user-check"></i> Ação do Administrador</h3>
+                                <div class="form-group"><label>Parecer</label><textarea id="parecer-input" rows="3" placeholder="Justifique a decisão..."></textarea></div>
+                                <div class="admin-buttons">
+                                    <button id="btn-approve" class="action-button approve"><i data-feather="check"></i> Aprovar</button>
+                                    <button id="btn-reprove" class="action-button reprove"><i data-feather="x"></i> Reprovar</button>
+                                    <button id="btn-improve" class="action-button improve"><i data-feather="edit-3"></i> Solicitar Melhoria</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="admin-page" class="page">
+                <button class="back-button" onclick="showPage('home-page')"><i data-feather="arrow-left"></i> Voltar ao Menu</button>
+                <div class="page-header"><h1><i data-feather="settings"></i> Configurações Gerais</h1></div>
+                <div id="admin-content"></div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
