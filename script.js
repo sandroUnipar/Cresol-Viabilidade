@@ -6,7 +6,7 @@ const state = {
 
 // --- DADOS PADRÃO ---
 const defaultUsers = [
-    { name: 'Sandro Sousa dos Anjos', username: 'sandro.anjos', role: 'admin', password: '123' },
+    { name: 'Sandro Sousa dos Anjos', username: 'sandro.anjos', role: 'admin', password: null },
     { name: 'Alisson Rafael Siliprandi Haubert', username: 'alisson.haubert', role: 'user', password: null },
     { name: 'Lucas William Garstka', username: 'lucas.garstka', role: 'user', password: null },
     { name: 'Marcelo Goulart Rodrigues', username: 'marcelo.goulart', role: 'user', password: null },
@@ -57,27 +57,32 @@ document.addEventListener('DOMContentLoaded', () => {
  * Inicializa a página principal (home.html)
  */
 function mainAppInit() {
-    checkLogin(); // Se não estiver logado, esta função redireciona
+    checkLogin();
     loadData();
     setupHomeEventListeners();
     showPage('home-page');
     
     const loader = document.getElementById('loader');
     const appContent = document.getElementById('app-content');
+
     if (loader) {
+        // CORREÇÃO: Torna o loader "não-clicável" imediatamente
+        loader.style.pointerEvents = 'none';
         loader.style.opacity = '0';
-        loader.addEventListener('transitionend', () => loader.style.display = 'none');
+        // Garante que o loader seja removido da tela após a animação
+        setTimeout(() => {
+            loader.style.display = 'none';
+        }, 600); // 600ms é um tempo seguro para a transição de opacidade terminar
     }
+    
     if (appContent) {
         appContent.classList.remove('hidden');
     }
 }
 
 function setupHomeEventListeners() {
-    document.getElementById('logout-btn').addEventListener('click', handleLogout);
-    document.getElementById('btn-approve').addEventListener('click', (e) => handleAdminDecision('Aprovado', e.target));
-    document.getElementById('btn-reprove').addEventListener('click', (e) => handleAdminDecision('Reprovado', e.target));
-    document.getElementById('btn-improve').addEventListener('click', (e) => handleAdminDecision('Solicitar Melhoria', e.target));
+    // Esta função foi deixada vazia pois os cliques são gerenciados pelo 'onclick' no HTML,
+    // mas pode ser usada para outros eventos no futuro.
 }
 
 function setupLoginEventListeners() {
@@ -260,28 +265,35 @@ function renderCalculator() {
         });
         container.appendChild(categoryDiv);
     });
-    container.addEventListener('click', handleCalculatorInput);
-    container.addEventListener('input', handleCalculatorInput);
+    // Adiciona os event listeners no container pai para melhor performance
+    const qContainer = document.getElementById('questions-container');
+    qContainer.removeEventListener('click', handleCalculatorInput); // Remove listener antigo para evitar duplicação
+    qContainer.addEventListener('click', handleCalculatorInput);
+    qContainer.removeEventListener('input', handleCalculatorInput);
+    qContainer.addEventListener('input', handleCalculatorInput);
+    
     document.getElementById('admin-actions-container').style.display = (state.currentUser.role === 'admin') ? 'block' : 'none';
     calculateScores();
 }
 
 function handleCalculatorInput(e) {
-    const qId = e.target.dataset.questionId;
+    const target = e.target;
+    const qId = target.dataset.questionId;
     if (!qId) return;
 
     const question = state.questions.find(q => q.id == qId);
     if (!question) return;
 
-    if (e.target.tagName === 'BUTTON') {
-        document.querySelectorAll(`button[data-question-id="${qId}"]`).forEach(btn => btn.classList.remove('selected'));
-        e.target.classList.add('selected');
+    if (target.tagName === 'BUTTON') {
+        // Desseleciona irmãos
+        target.parentElement.querySelectorAll('button').forEach(btn => btn.classList.remove('selected'));
+        target.classList.add('selected');
         if (question.key === 'tech') {
-            state.answers[question.key] = e.target.textContent;
+            state.answers[question.key] = target.textContent;
         }
-        state.answers[qId] = parseInt(e.target.value);
-    } else {
-        state.answers[question.key] = e.target.value;
+        state.answers[qId] = parseInt(target.value);
+    } else if (target.tagName === 'INPUT') {
+        state.answers[question.key] = target.value;
     }
     calculateScores();
 }
@@ -650,7 +662,6 @@ function renderUserManagement() {
     const listContainer = document.getElementById('user-management-list');
     listContainer.innerHTML = '';
     state.allUsers.forEach(user => {
-        // Não mostra o admin atual na lista para evitar que ele se tranque para fora
         if (user.username === state.currentUser.username) return;
 
         listContainer.innerHTML += `
