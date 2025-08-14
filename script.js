@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function mainAppInit() {
     checkLogin();
     loadData();
-    setupHomeEventListeners();
+    setupEventListeners(); // Função centralizada para todos os event listeners
     showPage('home-page');
     const loader = document.getElementById('loader');
     if (loader) {
@@ -62,8 +62,15 @@ function mainAppInit() {
     document.getElementById('app-content')?.classList.remove('hidden');
 }
 
-function setupHomeEventListeners() {
+// CORREÇÃO: Função única para configurar todos os event listeners da aplicação principal
+function setupEventListeners() {
+    // Listeners da página principal (home.html)
     document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
+
+    // Listeners dos botões de decisão do admin na página da calculadora
+    document.getElementById('btn-approve')?.addEventListener('click', () => handleAdminDecision('Aprovado', document.getElementById('btn-approve')));
+    document.getElementById('btn-reprove')?.addEventListener('click', () => handleAdminDecision('Reprovado', document.getElementById('btn-reprove')));
+    document.getElementById('btn-improve')?.addEventListener('click', () => handleAdminDecision('Solicitar Melhoria', document.getElementById('btn-improve')));
 }
 
 function setupLoginEventListeners() {
@@ -240,12 +247,6 @@ function renderCalculator() {
     container.addEventListener('click', handleCalculatorInput);
     container.addEventListener('input', handleCalculatorInput);
     document.getElementById('admin-actions-container').style.display = (state.currentUser.role === 'admin') ? 'block' : 'none';
-    
-    // CORREÇÃO: Adiciona os event listeners para os botões de admin
-    document.getElementById('btn-approve').addEventListener('click', () => handleAdminDecision('Aprovado', document.getElementById('btn-approve')));
-    document.getElementById('btn-reprove').addEventListener('click', () => handleAdminDecision('Reprovado', document.getElementById('btn-reprove')));
-    document.getElementById('btn-improve').addEventListener('click', () => handleAdminDecision('Solicitar Melhoria', document.getElementById('btn-improve')));
-    
     calculateScores();
 }
 
@@ -373,17 +374,22 @@ function handleAdminDecision(status, button) {
         score,
         evaluator: state.currentUser.name
     };
+
+    // A API está sendo chamada aqui. Se a rede ou a base de dados falharem,
+    // o `.catch()` abaixo será executado.
     fetch('https://automacao-api.onrender.com/api/save-decision', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(decision)
-    }).then(res => res.json()).then(data => {
+    }).then(res => {
+        if (!res.ok) {
+            // Lança um erro se a resposta da API não for de sucesso (ex: 400, 500)
+            return res.json().then(err => { throw new Error(err.error || 'Erro no servidor') });
+        }
+        return res.json();
+    }).then(data => {
         if (data.success) {
-            // CORREÇÃO: Abre o SDD se for aprovado
             if (status === 'Aprovado') {
-                // Passa os dados para a página do SDD através do sessionStorage
                 sessionStorage.setItem('sddData', JSON.stringify(decision));
                 window.open('sdd_padrao.html', '_blank');
             }
@@ -391,12 +397,10 @@ function handleAdminDecision(status, button) {
             setTimeout(() => {
                 showPage('home-page');
             }, 1000);
-        } else {
-            alert('Erro ao salvar no banco de dados: ' + data.error);
         }
     }).catch(err => {
-        console.error(err);
-        alert('Erro de conexão com o servidor.');
+        console.error("Erro no fetch para save-decision:", err);
+        alert('Falha ao comunicar com o servidor: ' + err.message);
     });
 }
 
@@ -406,6 +410,9 @@ async function renderHistory() {
     container.innerHTML = '<p style="text-align:center; padding: 2rem 0;">A carregar histórico...</p>';
     try {
         const response = await fetch('https://automacao-api.onrender.com/api/history');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const history = await response.json();
         state.processHistory = history;
         container.innerHTML = '';
@@ -414,11 +421,7 @@ async function renderHistory() {
         } else {
             history.forEach(item => {
                 const iconClass = item.status.replace(/\s+/g, '-');
-                const iconName = {
-                    'Aprovado': 'check-circle',
-                    'Reprovado': 'x-circle',
-                    'Solicitar-Melhoria': 'edit'
-                }[iconClass] || 'help-circle';
+                const iconName = { 'Aprovado': 'check-circle', 'Reprovado': 'x-circle', 'Solicitar-Melhoria': 'edit' }[iconClass] || 'help-circle';
                 const itemDiv = document.createElement('div');
                 itemDiv.className = 'history-item';
                 const parecer = item.dados_respostas_qualitativas ? JSON.parse(item.dados_respostas_qualitativas).parecer : '';
@@ -429,7 +432,7 @@ async function renderHistory() {
         }
     } catch (error) {
         console.error('Erro ao buscar histórico:', error);
-        container.innerHTML = '<p style="text-align:center; padding: 2rem 0; color:var(--danger)">Falha ao carregar o histórico.</p>';
+        container.innerHTML = '<p style="text-align:center; padding: 2rem 0; color:var(--danger)">Falha ao carregar o histórico. Verifique a ligação à API.</p>';
     }
     renderIcons();
 }

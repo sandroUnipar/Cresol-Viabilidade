@@ -1,11 +1,17 @@
 import express from 'express';
 import pkg from 'pg';
+import cors from 'cors'; // 1. IMPORTAR o pacote cors
 
 const { Pool } = pkg;
 const app = express();
+
+// 2. USAR O CORS
+// Esta linha adiciona os cabeçalhos de permissão à sua API
+app.use(cors());
+
 app.use(express.json());
 
-// Configuração da ligação à base de dados a partir da variável de ambiente do Render
+// O resto do seu código permanece igual...
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
@@ -17,7 +23,6 @@ const pool = new Pool({
 app.post('/api/save-decision', async (req, res) => {
     const { processName, status, parecer, score, evaluator } = req.body;
 
-    // Validação básica
     if (!processName || !status || !evaluator || score === undefined) {
         return res.status(400).json({ success: false, error: "Dados incompletos." });
     }
@@ -27,14 +32,7 @@ app.post('/api/save-decision', async (req, res) => {
         (nome_processo, status, avaliador, pontuacao_final, dados_respostas_qualitativas, data_avaliacao)
         VALUES ($1, $2, $3, $4, $5, NOW())
     `;
-    
-    const values = [
-        processName,
-        status,
-        evaluator,
-        score,
-        JSON.stringify({ parecer }) // Salva o parecer como um JSON
-    ];
+    const values = [processName, status, evaluator, score, JSON.stringify({ parecer })];
 
     try {
         const client = await pool.connect();
@@ -47,11 +45,18 @@ app.post('/api/save-decision', async (req, res) => {
     }
 });
 
-// Endpoint de "saúde" para verificar se a API está no ar
-app.get('/api/health', (req, res) => {
-    res.status(200).send('API está funcionando!');
+// Endpoint para buscar o histórico
+app.get('/api/history', async (req, res) => {
+    try {
+        const client = await pool.connect();
+        const result = await client.query('SELECT * FROM public.processos_automacao ORDER BY data_avaliacao DESC');
+        client.release();
+        res.status(200).json(result.rows);
+    } catch (err) {
+        console.error("Erro ao buscar histórico:", err);
+        res.status(500).json({ success: false, error: err.message });
+    }
 });
-
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`API a rodar na porta ${PORT}`));
