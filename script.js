@@ -398,19 +398,47 @@ function handleAdminDecision(status, button) {
     const processName = document.getElementById('processName').value;
     const parecer = document.getElementById('parecer-input').value;
     const score = document.getElementById('idea-score').textContent;
-    if (!processName) { alert('Por favor, insira o nome do processo/ideia.'); return; }
-    if ((status === 'Reprovado' || status === 'Solicitar Melhoria') && !parecer) { alert('É obrigatório fornecer um parecer para esta ação.'); return; }
 
-    const decision = { id: Date.now(), processName, status, parecer, score, evaluator: state.currentUser.name, date: new Date().toLocaleDateString('pt-BR') };
-    state.processHistory.unshift(decision);
-    saveData('processHistory', state.processHistory);
+    if (!processName) { 
+        alert('Por favor, insira o nome do processo/ideia.'); 
+        return; 
+    }
+    if ((status === 'Reprovado' || status === 'Solicitar Melhoria') && !parecer) { 
+        alert('É obrigatório fornecer um parecer para esta ação.'); 
+        return; 
+    }
 
-    showFeedback(button);
+    const decision = {
+        processName,
+        status,
+        parecer,
+        score: parseInt(score),
+        evaluator: state.currentUser.name
+    };
 
-    setTimeout(() => {
-        showPage('home-page');
-    }, 1000);
+    fetch('https://SEU_BACKEND.onrender.com/api/save-decision', { // coloque a URL do Render
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(decision)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            if (status === 'Aprovado') {
+                window.open('sdd_padrao.html', '_blank'); // Abre SDD
+            }
+            showFeedback(button);
+            setTimeout(() => { showPage('home-page'); }, 1000);
+        } else {
+            alert('Erro ao salvar no banco.');
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert('Erro de conexão com o servidor.');
+    });
 }
+
 
 function renderHistory() {
     const container = document.getElementById('history-container');
