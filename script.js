@@ -416,7 +416,7 @@ function handleAdminDecision(status, button) {
         evaluator: state.currentUser.name
     };
 
-    fetch('https://SEU_BACKEND.onrender.com/api/save-decision', { // coloque a URL do Render
+    fetch('https://automacao-api.onrender.com/api/save-decision', { // coloque a URL do Render
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(decision)
